@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ComposeHelloWorld</string>
+    <string name="email">\"Input meme text\"</string>
+    <string name="button_text">Get a Meme</string>
+</resources>
