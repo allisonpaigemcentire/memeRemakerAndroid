@@ -6,40 +6,30 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyColumn()
+          MyColumn()
         }
     }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(
-        text = "Hello $name!",
-        modifier = Modifier.padding(1.dp),
-        fontStyle = FontStyle.Italic,
-        fontSize = 30.sp,
-        fontWeight = FontWeight.Bold
-    )
 }
 
 @Composable
@@ -51,10 +41,10 @@ fun imageFromURL() {
         modifier = Modifier
             // on below line we are adding
             // padding from all sides.
-            .padding(16.dp),
+            .padding(1.dp),
         // on below line we are adding vertical
         // and horizontal arrangement.
-        verticalArrangement = Arrangement.Center,
+       // verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // on below line we are adding image for our image view.
@@ -77,11 +67,13 @@ fun imageFromURL() {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MyTextField() {
     val textValue = remember { mutableStateOf("") }
 
     val primaryColor = colorResource(id = R.color.colorPrimary)
+    val keyboardController = current
 
     OutlinedTextField(
         label = { Text(text = stringResource(id = R.string.email)) },
@@ -90,7 +82,8 @@ fun MyTextField() {
             focusedLabelColor = primaryColor,
             cursorColor = primaryColor
         ),
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = {keyboardController?.hide()}),
         value = textValue.value,
         onValueChange = {
             textValue.value = it
@@ -122,8 +115,6 @@ fun MyColumn() {
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize()
     ) {
-
-        Greeting(name = "Bill Muuray")
         imageFromURL()
         MyTextField()
         MyButton()
