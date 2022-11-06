@@ -26,12 +26,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Surface(color = MaterialTheme.colors.background) {
-                Greeting(name = "Bill Muuray")
-                imageFromURL()
-                TextFieldScreen()
-                MyButton()
-            }
+            MyColumn()
         }
     }
 }
@@ -54,12 +49,9 @@ fun imageFromURL() {
         // in this column we are adding modifier
         // to fill max size, mz height and max width
         modifier = Modifier
-            .fillMaxSize()
-            .fillMaxHeight()
-            .fillMaxWidth()
             // on below line we are adding
             // padding from all sides.
-            .padding(1.dp),
+            .padding(16.dp),
         // on below line we are adding vertical
         // and horizontal arrangement.
         verticalArrangement = Arrangement.Center,
@@ -82,17 +74,6 @@ fun imageFromURL() {
                 .wrapContentHeight()
                 .wrapContentWidth()
         )
-    }
-}
-
-@Composable
-fun TextFieldScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        MyTextField()
     }
 }
 
@@ -133,6 +114,23 @@ fun MyButton() {
         )
     }
 }
+
+@Composable
+fun MyColumn() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        Greeting(name = "Bill Muuray")
+        imageFromURL()
+        MyTextField()
+        MyButton()
+    }
+}
+
+
 
 
 
