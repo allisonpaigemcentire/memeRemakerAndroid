@@ -24,30 +24,18 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-          MyColumn()
+            MyColumn()
         }
     }
 }
 
 @Composable
-fun imageFromURL() {
-    // on below line we are creating a column,
-    Column(
-        // in this column we are adding modifier
-        // to fill max size, mz height and max width
-        modifier = Modifier
-            // on below line we are adding
-            // padding from all sides.
-            .padding(1.dp),
-        // on below line we are adding vertical
-        // and horizontal arrangement.
-       // verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // on below line we are adding image for our image view.
+fun ImageFromBitMap() {
+
         Image(
             // on below line we are adding the image url
             // from which we will  be loading our image.
@@ -64,7 +52,7 @@ fun imageFromURL() {
                 .wrapContentHeight()
                 .wrapContentWidth()
         )
-    }
+
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -94,7 +82,9 @@ fun MyTextField() {
 @Composable
 fun MyButton() {
     Button(
-        onClick = {},
+        onClick = {
+            MainActivityModel().main()
+        },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
         border = BorderStroke(
             1.dp,
@@ -115,7 +105,7 @@ fun MyColumn() {
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize()
     ) {
-        imageFromURL()
+        ImageFromBitMap()
         MyTextField()
         MyButton()
     }
