@@ -22,6 +22,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -83,7 +87,12 @@ fun MyTextField() {
 fun MyButton() {
     Button(
         onClick = {
-            MainActivityModel().main()
+            val job = Job()
+            val ioScope = CoroutineScope(Dispatchers.IO + job)
+            val viewModel = MainActivityModel()
+            ioScope.launch {
+                val memeArray = viewModel.main()
+            }
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
         border = BorderStroke(
