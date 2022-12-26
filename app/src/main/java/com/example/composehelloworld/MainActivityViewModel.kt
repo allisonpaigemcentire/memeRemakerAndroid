@@ -1,7 +1,5 @@
 package com.example.composehelloworld
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +13,8 @@ import okhttp3.OkHttpClient
 class MainActivityModel: ViewModel() {
 
     val client = OkHttpClient()
-
     suspend fun events(): Flow<String> = MemeService().fetchMemeArray().asFlow().onEach { delay(100) }
+
 
     fun main() = runBlocking<Unit> {
         this.launch {
@@ -27,21 +25,18 @@ class MainActivityModel: ViewModel() {
         }
     }
 
-    suspend fun byteArrayToBitmap(): Bitmap? {
-        return try {
-            val byteArray = MemeService().fetchMeme()
-            byteArray?.size?.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
-        } catch (e: NumberFormatException) {
-            println("Bitmap Error: ")
-            println(e)
-            null
-        }
-    }
+//    private suspend fun byteArrayToBitmap(): ImageBitmap {
+//
+//        val byteArray = MemeService().fetchMeme()
+//        var bitmap = byteArray?.size?.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
+//        return bitmap.asImageBitmap()
+//    }
 
 //    fun getRandomMemeName() {
 //        val rnds = (0..999).random()
-//        val randomMemeName: String = getMemeArray()[rnds]
+//        val randomMemeName: String = events()[rnds]
 //        println("RANDOM MEME: ")
 //        println(randomMemeName)
 //    }
 }
+

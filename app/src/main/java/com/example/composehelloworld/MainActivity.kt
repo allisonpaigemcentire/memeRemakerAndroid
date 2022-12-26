@@ -1,5 +1,6 @@
 package com.example.composehelloworld
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,9 +30,19 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
+    val job = Job()
+    val ioScope = CoroutineScope(Dispatchers.IO + job)
+    val uiScope = CoroutineScope(Dispatchers.Main + job)
+    val viewModel = MainActivityModel()
+
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            ioScope.launch {
+                viewModel.main()
+            }
             MyColumn()
         }
     }
@@ -40,24 +51,25 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ImageFromBitMap() {
 
-        Image(
-            // on below line we are adding the image url
-            // from which we will  be loading our image.
-            painter = rememberAsyncImagePainter("https://www.fillmurray.com/200/300"),
+    Image(
+        // on below line we are adding the image url
+        // from which we will  be loading our image.
+        painter = rememberAsyncImagePainter("https://www.fillmurray.com/200/300"),
 
-            // on below line we are adding content
-            // description for our image.
-            contentDescription = "gfg image",
+        // on below line we are adding content
+        // description for our image.
+        contentDescription = "gfg image",
 
-            // on below line we are adding modifier for our
-            // image as wrap content for height and width.
-            modifier = Modifier
-                .wrapContentSize()
-                .wrapContentHeight()
-                .wrapContentWidth()
-        )
+        // on below line we are adding modifier for our
+        // image as wrap content for height and width.
+        modifier = Modifier
+            .wrapContentSize()
+            .wrapContentHeight()
+            .wrapContentWidth()
+    )
 
 }
+
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -87,12 +99,7 @@ fun MyTextField() {
 fun MyButton() {
     Button(
         onClick = {
-            val job = Job()
-            val ioScope = CoroutineScope(Dispatchers.IO + job)
-            val viewModel = MainActivityModel()
-            ioScope.launch {
-                val memeArray = viewModel.main()
-            }
+            println("meme button clicked")
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
         border = BorderStroke(
