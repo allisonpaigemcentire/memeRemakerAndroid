@@ -42,11 +42,12 @@ class MemeService(
             val response = client.newCall(request).execute()
 
             if (response.isSuccessful) {
-                println("Meme Response Body: ")
+                println("Meme Image Response Body: ")
                 continuation.resumeWith(Result.success(response.body!!.bytes()))
             } else {
-                continuation.resumeWith(Result.failure(Exception("No meme array found")))
+                continuation.resumeWith(Result.failure(Exception("No meme image found")))
             }
         }
     }
+
 }

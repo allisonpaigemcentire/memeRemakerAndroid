@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -39,34 +40,59 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            var imageBitmap: ImageBitmap? = null
+            val launch = ioScope.launch {
 
-            ioScope.launch {
                 viewModel.main()
+                uiScope.launch {
+                    imageBitmap = viewModel.getImage()
+                }
             }
-            MyColumn()
+            MyColumn(imageBitmap)
         }
     }
 }
 
 @Composable
-fun ImageFromBitMap() {
+fun ImageFromBitMap(
+    imageBitmap: ImageBitmap? = null
+) {
 
-    Image(
-        // on below line we are adding the image url
-        // from which we will  be loading our image.
-        painter = rememberAsyncImagePainter("https://www.fillmurray.com/200/300"),
+    if (imageBitmap != null) {
+        Image(
+            // on below line we are adding the image url
+            // from which we will  be loading our image.
+            //painter = rememberAsyncImagePainter("https://www.fillmurray.com/200/300"),
+            bitmap = imageBitmap,
+            // on below line we are adding content
+            // description for our image.
+            contentDescription = "gfg image",
 
-        // on below line we are adding content
-        // description for our image.
-        contentDescription = "gfg image",
+            // on below line we are adding modifier for our
+            // image as wrap content for height and width.
+            modifier = Modifier
+                .wrapContentSize()
+                .wrapContentHeight()
+                .wrapContentWidth()
+        )
+    } else {
+        Image(
+            // on below line we are adding the image url
+            // from which we will  be loading our image.
+            painter = rememberAsyncImagePainter("https://www.fillmurray.com/200/300"),
 
-        // on below line we are adding modifier for our
-        // image as wrap content for height and width.
-        modifier = Modifier
-            .wrapContentSize()
-            .wrapContentHeight()
-            .wrapContentWidth()
-    )
+            // on below line we are adding content
+            // description for our image.
+            contentDescription = "gfg image",
+
+            // on below line we are adding modifier for our
+            // image as wrap content for height and width.
+            modifier = Modifier
+                .wrapContentSize()
+                .wrapContentHeight()
+                .wrapContentWidth()
+        )
+    }
 
 }
 
@@ -115,13 +141,15 @@ fun MyButton() {
 }
 
 @Composable
-fun MyColumn() {
+fun MyColumn(
+    imageBitmap: ImageBitmap? = null
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize()
     ) {
-        ImageFromBitMap()
+        ImageFromBitMap(imageBitmap = imageBitmap)
         MyTextField()
         MyButton()
     }
