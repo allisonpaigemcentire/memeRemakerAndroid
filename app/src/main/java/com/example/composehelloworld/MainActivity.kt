@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -11,8 +12,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -34,36 +35,40 @@ class MainActivity : ComponentActivity() {
     val job = Job()
     val ioScope = CoroutineScope(Dispatchers.IO + job)
     val uiScope = CoroutineScope(Dispatchers.Main + job)
-    val viewModel = MainActivityModel()
+    private val viewModel: MainActivityModel by viewModels()
 
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var imageBitmap: ImageBitmap? = null
+            val memeData by viewModel.memeData.observeAsState(MemeData())
+
             val launch = ioScope.launch {
 
                 viewModel.main()
                 uiScope.launch {
-                    imageBitmap = viewModel.getImage()
+                   // imageBitmap = viewModel.getImage()
+                   // memeData.imageBitmap = imageBitmap
                 }
             }
-            MyColumn(imageBitmap)
+            MyColumn(
+                memeData = memeData,
+                onValueChanged = viewModel::onValueChanged
+            )
         }
     }
 }
 
+
 @Composable
 fun ImageFromBitMap(
-    imageBitmap: ImageBitmap? = null
+    image: ImageBitmap?
 ) {
 
-    if (imageBitmap != null) {
+    if (image != null) {
         Image(
-            // on below line we are adding the image url
-            // from which we will  be loading our image.
-            //painter = rememberAsyncImagePainter("https://www.fillmurray.com/200/300"),
-            bitmap = imageBitmap,
+            // load image from MemeData
+            bitmap = image,
             // on below line we are adding content
             // description for our image.
             contentDescription = "gfg image",
@@ -94,14 +99,16 @@ fun ImageFromBitMap(
         )
     }
 
+
 }
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MyTextField() {
-    val textValue = remember { mutableStateOf("") }
-
+fun MyTextField(
+    value: String,
+    onValueChanged: (String) -> Unit
+) {
     val primaryColor = colorResource(id = R.color.colorPrimary)
     val keyboardController = current
 
@@ -114,18 +121,21 @@ fun MyTextField() {
         ),
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = {keyboardController?.hide()}),
-        value = textValue.value,
+        value = value,
         onValueChange = {
-            textValue.value = it
+            onValueChanged(it)
         },
     )
 }
 
 @Composable
-fun MyButton() {
+fun MyButton(
+    memeData: MemeData
+) {
     Button(
         onClick = {
-            println("meme button clicked")
+            println("Meme text is now:")
+            println(memeData.memeText)
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
         border = BorderStroke(
@@ -142,16 +152,24 @@ fun MyButton() {
 
 @Composable
 fun MyColumn(
-    imageBitmap: ImageBitmap? = null
+    memeData: MemeData,
+    onValueChanged: (String) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxSize()
     ) {
-        ImageFromBitMap(imageBitmap = imageBitmap)
-        MyTextField()
-        MyButton()
+        ImageFromBitMap(
+            image = memeData.imageBitmap
+        )
+        MyTextField(
+            value = memeData.memeText,
+            onValueChanged = { onValueChanged(it) }
+        )
+        MyButton(
+            memeData = memeData
+        )
     }
 }
 
