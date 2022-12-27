@@ -42,15 +42,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val memeData by viewModel.memeData.observeAsState(MemeData())
-
             val launch = ioScope.launch {
 
-                viewModel.main()
+                var image = viewModel.getImage()
                 uiScope.launch {
-                   // imageBitmap = viewModel.getImage()
-                   // memeData.imageBitmap = imageBitmap
+
+                    viewModel.onImageChanged(image)
                 }
             }
+
             MyColumn(
                 memeData = memeData,
                 onValueChanged = viewModel::onValueChanged

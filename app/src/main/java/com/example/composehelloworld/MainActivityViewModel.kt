@@ -23,6 +23,7 @@ class MainActivityModel : ViewModel() {
         get() = _memeData
 
 
+
     suspend fun events(): Flow<String> = MemeService().fetchMemeArray().asFlow().onEach { delay(100) }
     suspend fun getImage(): ImageBitmap = byteArrayToBitmap()
 
@@ -31,15 +32,13 @@ class MainActivityModel : ViewModel() {
             events()
                 .onEach { event -> println("Meme Flow Event: $event") }
                 .collect()
-            println("Meme Flow Done")
+            println("Meme Image fetched")
         }
     }
 
     suspend fun byteArrayToBitmap(): ImageBitmap {
-
-        val byteArray = MemeService().fetchMeme()
-        var bitmap = byteArray?.size?.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
-        println("returning imagebitmap meme image")
+        val byteArray = MemeService().fetchMeme(top = "Hello", bottom = "World")
+        var bitmap = byteArray.size.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
         return bitmap.asImageBitmap()
     }
 
@@ -54,6 +53,9 @@ class MainActivityModel : ViewModel() {
             imageBitmap = imageBitmap
         )
     }
+
+
+
 
 //    fun getRandomMemeName() {
 //        val rnds = (0..999).random()

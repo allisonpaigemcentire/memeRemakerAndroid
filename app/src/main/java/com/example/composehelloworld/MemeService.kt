@@ -31,10 +31,10 @@ class MemeService(
         }
     }
 
-    suspend fun fetchMeme(): ByteArray {
+    suspend fun fetchMeme(top: String, bottom: String): ByteArray {
         return suspendCoroutine { continuation ->
             val request = Request.Builder()
-                .url("https://ronreiter-meme-generator.p.rapidapi.com/meme?top=Top%20Text&bottom=Bottom%20Text&meme=Condescending-Wonka&font_size=50&font=Impact")
+                .url("https://ronreiter-meme-generator.p.rapidapi.com/meme?top=" + top + "&bottom=" + bottom + "&meme=Condescending-Wonka&font_size=50&font=Impact")
                 .get()
                 .addHeader("X-RapidAPI-Key", "00cf668ed5msh705f726058f3499p1b563fjsn8cd0a05a9234")
                 .addHeader("X-RapidAPI-Host", "ronreiter-meme-generator.p.rapidapi.com")
@@ -48,6 +48,6 @@ class MemeService(
                 continuation.resumeWith(Result.failure(Exception("No meme image found")))
             }
         }
-    }
+    }//&meme=Condescending-Wonka&font_size=50&font=Impact"
 
 }
