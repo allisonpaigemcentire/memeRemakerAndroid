@@ -29,7 +29,7 @@ class MainActivityModel : ViewModel() {
     fun getImage(): ImageBitmap = byteArrayToBitmap()
 
     fun byteArrayToBitmap(): ImageBitmap {
-        val byteArray = MemeService().fetchMeme(top = memeData.value?.memeText ?: "fail", bottom = getRandomMemeText())
+        val byteArray = MemeService().fetchMeme(top = memeData.value?.memeText ?: "fail", bottom = "")
         var bitmap = byteArray.size.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
         return bitmap.asImageBitmap()
     }
@@ -41,9 +41,9 @@ class MainActivityModel : ViewModel() {
     }
 
     fun onImageChanged(imageBitmap: ImageBitmap) {
-        _memeData.value = _memeData.value?.copy(
-            imageBitmap = imageBitmap
-        )
+        println("just setting this value")
+        print(imageBitmap)
+        _memeData.value
     }
 
 

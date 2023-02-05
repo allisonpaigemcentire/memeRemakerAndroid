@@ -43,7 +43,11 @@ class MainActivity : ComponentActivity() {
 
             MyColumn(
                 memeData = memeData,
-                onValueChanged = viewModel::onValueChanged
+                onValueChanged = viewModel::onValueChanged,
+                onButtonClicked = {
+                    println("just received image")
+                    println(it)
+                }
             )
         }
     }
@@ -120,7 +124,8 @@ fun MyTextField(
 
 @Composable
 fun MyButton(
-    memeData: MemeData
+    memeData: MemeData,
+    onButtonClicked: (ImageBitmap) -> Unit
 ) {
     Button(
         onClick = {
@@ -131,6 +136,7 @@ fun MyButton(
             val viewModel = MainActivityModel()
             ioScope.launch {
                 val image = viewModel.getImage()
+                onButtonClicked(image)
             }
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
@@ -149,7 +155,8 @@ fun MyButton(
 @Composable
 fun MyColumn(
     memeData: MemeData,
-    onValueChanged: (String) -> Unit
+    onValueChanged: (String) -> Unit,
+    onButtonClicked: (ImageBitmap) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -166,7 +173,10 @@ fun MyColumn(
             }
         )
         MyButton(
-            memeData = memeData
+            memeData = memeData,
+            onButtonClicked = {
+                onButtonClicked(it)
+            }
         )
     }
 }
