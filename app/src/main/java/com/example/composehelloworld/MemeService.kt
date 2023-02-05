@@ -40,7 +40,6 @@ class MemeService(
             .addHeader("X-RapidAPI-Host", "ronreiter-meme-generator.p.rapidapi.com")
             .build()
         val response = client.newCall(request).execute()
-        println("just fetched a meme")
         return response.body!!.bytes()
     }
 

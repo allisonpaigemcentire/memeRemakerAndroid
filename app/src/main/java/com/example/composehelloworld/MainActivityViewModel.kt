@@ -23,13 +23,10 @@ class MainActivityModel : ViewModel() {
     val memeData: LiveData<MemeData>
         get() = _memeData
 
-
-
     suspend fun events(): Flow<String> = MemeService().fetchMemeArray().asFlow().onEach { delay(100) }
-    fun getImage(): ImageBitmap = byteArrayToBitmap()
 
-    fun byteArrayToBitmap(): ImageBitmap {
-        val byteArray = MemeService().fetchMeme(top = memeData.value?.memeText ?: "fail", bottom = "")
+    fun byteArrayToBitmap(text: String): ImageBitmap {
+        val byteArray = MemeService().fetchMeme(top = text ?: "fail", bottom = "")
         var bitmap = byteArray.size.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
         return bitmap.asImageBitmap()
     }
@@ -41,28 +38,12 @@ class MainActivityModel : ViewModel() {
     }
 
     fun onImageChanged(imageBitmap: ImageBitmap) {
-        println("just setting this value")
-        println(imageBitmap)
         _memeData.postValue(
             MemeData(
+                memeText = "Hello Wonka",
                 imageBitmap = imageBitmap
             )
-
         )
     }
-
-//
-//    fun getRandomMemeText(): String {
-//        val random = Random()
-//        return random.toString()
-//    }
-
-
-//    fun getRandomMemeName() {
-//        val rnds = (0..999).random()
-//        val randomMemeName: String = events()[rnds]
-//        println("RANDOM MEME: ")
-//        println(randomMemeName)
-//    }
 }
 

@@ -40,7 +40,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val memeData by viewModel.memeData.observeAsState(MemeData())
-
             MyColumn(
                 memeData = memeData,
                 onValueChanged = viewModel::onValueChanged,
@@ -55,7 +54,6 @@ class MainActivity : ComponentActivity() {
 fun ImageFromBitMap(
     memeData: MemeData
 ) {
-
     if (memeData.imageBitmap != null) {
         Image(
             // load image from MemeData
@@ -90,8 +88,6 @@ fun ImageFromBitMap(
                 .wrapContentWidth()
         )
     }
-
-
 }
 
 
@@ -127,13 +123,11 @@ fun MyButton(
 ) {
     Button(
         onClick = {
-            println("Meme text is just now:")
-            println(memeData.memeText)
             val job = Job()
             val ioScope = CoroutineScope(Dispatchers.IO + job)
             val viewModel = MainActivityModel()
             ioScope.launch {
-                val image = viewModel.getImage()
+                val image = viewModel.byteArrayToBitmap(memeData.memeText)
                 onButtonClicked(image)
             }
         },
