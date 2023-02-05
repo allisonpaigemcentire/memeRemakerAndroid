@@ -1,7 +1,6 @@
 package com.example.composehelloworld
 
 import android.annotation.SuppressLint
-import android.media.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -45,8 +44,7 @@ class MainActivity : ComponentActivity() {
                 memeData = memeData,
                 onValueChanged = viewModel::onValueChanged,
                 onButtonClicked = {
-                    println("just received image")
-                    println(it)
+                    println("just how do I update the image view when the button is clicked?")
                 }
             )
         }
@@ -56,13 +54,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ImageFromBitMap(
-    image: ImageBitmap?
+    memeData: MemeData
 ) {
 
-    if (image != null) {
+    if (memeData.imageBitmap != null) {
         Image(
             // load image from MemeData
-            bitmap = image,
+            bitmap = memeData.imageBitmap,
             // on below line we are adding content
             // description for our image.
             contentDescription = "gfg image",
@@ -74,6 +72,7 @@ fun ImageFromBitMap(
                 .wrapContentHeight()
                 .wrapContentWidth()
         )
+
     } else {
         Image(
             // on below line we are adding the image url
@@ -125,7 +124,7 @@ fun MyTextField(
 @Composable
 fun MyButton(
     memeData: MemeData,
-    onButtonClicked: (ImageBitmap) -> Unit
+    onButtonClicked: () -> Unit
 ) {
     Button(
         onClick = {
@@ -136,7 +135,8 @@ fun MyButton(
             val viewModel = MainActivityModel()
             ioScope.launch {
                 val image = viewModel.getImage()
-                onButtonClicked(image)
+                viewModel.onImageChanged(image)
+                onButtonClicked()
             }
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
@@ -156,7 +156,7 @@ fun MyButton(
 fun MyColumn(
     memeData: MemeData,
     onValueChanged: (String) -> Unit,
-    onButtonClicked: (ImageBitmap) -> Unit
+    onButtonClicked: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -164,7 +164,7 @@ fun MyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
         ImageFromBitMap(
-            image = memeData.imageBitmap
+            memeData = memeData
         )
         MyTextField(
             value = memeData.memeText,
@@ -175,7 +175,7 @@ fun MyColumn(
         MyButton(
             memeData = memeData,
             onButtonClicked = {
-                onButtonClicked(it)
+                onButtonClicked()
             }
         )
     }

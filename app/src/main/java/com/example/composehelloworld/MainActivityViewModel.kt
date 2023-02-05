@@ -42,15 +42,20 @@ class MainActivityModel : ViewModel() {
 
     fun onImageChanged(imageBitmap: ImageBitmap) {
         println("just setting this value")
-        print(imageBitmap)
-        _memeData.value
+        println(imageBitmap)
+        _memeData.postValue(
+            MemeData(
+                imageBitmap = imageBitmap
+            )
+
+        )
     }
 
-
-    fun getRandomMemeText(): String {
-        val random = Random()
-        return random.toString()
-    }
+//
+//    fun getRandomMemeText(): String {
+//        val random = Random()
+//        return random.toString()
+//    }
 
 
 //    fun getRandomMemeName() {
