@@ -29,6 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.reflect.KFunction1
 
 class MainActivity : ComponentActivity() {
 
@@ -43,9 +44,7 @@ class MainActivity : ComponentActivity() {
             MyColumn(
                 memeData = memeData,
                 onValueChanged = viewModel::onValueChanged,
-                onButtonClicked = {
-                    println("just how do I update the image view when the button is clicked?")
-                }
+                onButtonClicked = viewModel::onImageChanged
             )
         }
     }
@@ -124,19 +123,18 @@ fun MyTextField(
 @Composable
 fun MyButton(
     memeData: MemeData,
-    onButtonClicked: () -> Unit
+    onButtonClicked: (ImageBitmap) -> Unit
 ) {
     Button(
         onClick = {
-            println("Meme text is now:")
+            println("Meme text is just now:")
             println(memeData.memeText)
             val job = Job()
             val ioScope = CoroutineScope(Dispatchers.IO + job)
             val viewModel = MainActivityModel()
             ioScope.launch {
                 val image = viewModel.getImage()
-                viewModel.onImageChanged(image)
-                onButtonClicked()
+                onButtonClicked(image)
             }
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
@@ -156,7 +154,7 @@ fun MyButton(
 fun MyColumn(
     memeData: MemeData,
     onValueChanged: (String) -> Unit,
-    onButtonClicked: () -> Unit
+    onButtonClicked: (ImageBitmap) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -175,7 +173,7 @@ fun MyColumn(
         MyButton(
             memeData = memeData,
             onButtonClicked = {
-                onButtonClicked()
+                onButtonClicked(it)
             }
         )
     }
