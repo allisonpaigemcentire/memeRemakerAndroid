@@ -1,6 +1,7 @@
 package com.example.composehelloworld
 
 import android.annotation.SuppressLint
+import android.media.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,9 +33,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    val job = Job()
-    val ioScope = CoroutineScope(Dispatchers.IO + job)
-    val uiScope = CoroutineScope(Dispatchers.Main + job)
     private val viewModel: MainActivityModel by viewModels()
 
     @SuppressLint("CoroutineCreationDuringComposition")
@@ -45,8 +43,7 @@ class MainActivity : ComponentActivity() {
 
             MyColumn(
                 memeData = memeData,
-                onValueChanged = viewModel::onValueChanged,
-                onImageChanged = viewModel::onImageChanged
+                onValueChanged = viewModel::onValueChanged
             )
         }
     }
@@ -129,6 +126,12 @@ fun MyButton(
         onClick = {
             println("Meme text is now:")
             println(memeData.memeText)
+            val job = Job()
+            val ioScope = CoroutineScope(Dispatchers.IO + job)
+            val viewModel = MainActivityModel()
+            ioScope.launch {
+                val image = viewModel.getImage()
+            }
         },
         colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(id = R.color.colorPrimary)),
         border = BorderStroke(
@@ -146,8 +149,7 @@ fun MyButton(
 @Composable
 fun MyColumn(
     memeData: MemeData,
-    onValueChanged: (String) -> Unit,
-    onImageChanged: (ImageBitmap) -> Unit
+    onValueChanged: (String) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -159,7 +161,9 @@ fun MyColumn(
         )
         MyTextField(
             value = memeData.memeText,
-            onValueChanged = { onValueChanged(it) }
+            onValueChanged = {
+                onValueChanged(it)
+            }
         )
         MyButton(
             memeData = memeData
