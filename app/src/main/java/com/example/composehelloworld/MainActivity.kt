@@ -42,18 +42,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val memeData by viewModel.memeData.observeAsState(MemeData())
-            val launch = ioScope.launch {
-
-                var image = viewModel.getImage()
-                uiScope.launch {
-
-                    viewModel.onImageChanged(image)
-                }
-            }
 
             MyColumn(
                 memeData = memeData,
-                onValueChanged = viewModel::onValueChanged
+                onValueChanged = viewModel::onValueChanged,
+                onImageChanged = viewModel::onImageChanged
             )
         }
     }
@@ -153,7 +146,8 @@ fun MyButton(
 @Composable
 fun MyColumn(
     memeData: MemeData,
-    onValueChanged: (String) -> Unit
+    onValueChanged: (String) -> Unit,
+    onImageChanged: (ImageBitmap) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

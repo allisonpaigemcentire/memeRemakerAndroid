@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import java.util.*
 
 class MainActivityModel : ViewModel() {
 
@@ -25,19 +26,10 @@ class MainActivityModel : ViewModel() {
 
 
     suspend fun events(): Flow<String> = MemeService().fetchMemeArray().asFlow().onEach { delay(100) }
-    suspend fun getImage(): ImageBitmap = byteArrayToBitmap()
+    fun getImage(): ImageBitmap = byteArrayToBitmap()
 
-    fun main() = runBlocking<Unit> {
-        this.launch {
-            events()
-                .onEach { event -> println("Meme Flow Event: $event") }
-                .collect()
-            println("Meme Image fetched")
-        }
-    }
-
-    suspend fun byteArrayToBitmap(): ImageBitmap {
-        val byteArray = MemeService().fetchMeme(top = "Hello", bottom = "World")
+    fun byteArrayToBitmap(): ImageBitmap {
+        val byteArray = MemeService().fetchMeme(top = memeData.value?.memeText ?: "fail", bottom = getRandomMemeText())
         var bitmap = byteArray.size.let { BitmapFactory.decodeByteArray(byteArray, 0, it) }
         return bitmap.asImageBitmap()
     }
@@ -55,6 +47,10 @@ class MainActivityModel : ViewModel() {
     }
 
 
+    fun getRandomMemeText(): String {
+        val random = Random()
+        return random.toString()
+    }
 
 
 //    fun getRandomMemeName() {
